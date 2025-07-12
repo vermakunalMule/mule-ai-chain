@@ -1,0 +1,10 @@
+curl --location --request GET 'http://localhost:8091/list/tools' \
+--header 'apiKey: <your-api-key>' \
+--header 'llmType: OPENAI' \
+--header 'model: gpt-4o-mini' \
+--header 'Content-Type: application/json' \
+--data '{
+  "template": "You are a assistant who helps an organisation as a call centre agent deciding what action to take basd on user prompts ",
+  "instruction": "answer politely",
+  "dataset": "Please create order for thIS customer: • 2 units of item I-105 • Nina, shipping to Darwin, NT"
+}'
