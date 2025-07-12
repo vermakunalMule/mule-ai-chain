@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:mcp="http://www.mulesoft.org/schema/mule/mcp" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/mcp http://www.mulesoft.org/schema/mule/mcp/current/mule-mcp.xsd">
+	<flow name="create-order-tool" doc:id="479a51a2-a0f9-4cf4-aae8-19cfbb1611a7" >
+		<mcp:tool-listener doc:name="Tool Listener" doc:id="fc4c3213-3a35-4c24-92fd-6660e06ac9fa" config-ref="MCP_Server" name="create-order-tool">
+			<mcp:description ><![CDATA[create order based on customer_name, customer_address,item and qty]]></mcp:description>
+			<mcp:parameters-schema ><![CDATA[{
+  "name": "create-order-tool",
+  "description": "Creates one or more customer orders.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "orders": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "customer_name": {
+              "type": "string",
+              "description": "Name of the customer placing the order."
+            },
+            "customer_address": {
+              "type": "string",
+              "description": "Shipping address for the customer."
+            },
+            "item": {
+              "type": "string",
+              "description": "Item code to order."
+            },
+            "qty": {
+              "type": "integer",
+              "description": "Quantity of the item to order."
+            }
+          },
+          "required": ["customer_name", "customer_address", "item", "qty"]
+        },
+        "description": "A list of orders to create."
+      }
+    },
+    "required": ["orders"]
+  }
+}
+]]></mcp:parameters-schema>
+			<mcp:responses >
+				<mcp:text-tool-response-content text="#[payload.^raw]" />
+			</mcp:responses>
+		</mcp:tool-listener>
+		<flow-ref doc:name="Flow Reference" doc:id="f667d280-67b4-40a6-a424-260691be4c61" name="create-order-flow"/>
+	</flow>
+</mule>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:mac-inference="http://www.mulesoft.org/schema/mule/mac-inference" xmlns:mcp="http://www.mulesoft.org/schema/mule/mcp"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/mcp http://www.mulesoft.org/schema/mule/mcp/current/mule-mcp.xsd
+http://www.mulesoft.org/schema/mule/mac-inference http://www.mulesoft.org/schema/mule/mac-inference/current/mule-mac-inference.xsd">
+	
+
+	<flow name="get-invenotry-tool" doc:id="2475b9a8-1e54-4bb9-965a-999f4828f4a4" >
+		<mcp:tool-listener doc:name="Tool Listener" doc:id="bedb181a-3809-4923-becb-ddd3b4f819ad" config-ref="MCP_Server" name="get-inventory-tool">
+			<mcp:description ><![CDATA[get inventory for an item in a warehouse]]></mcp:description>
+			<mcp:parameters-schema ><![CDATA[{
+  "type": "function",
+  "function": {
+    "name": "get-inventory-tool",
+    "description": "Retrieves inventory quantity for a specific item in a warehouse.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "string",
+          "description": "The item code to query inventory for."
+        },
+        "warehouse": {
+          "type": "string",
+          "description": "The warehouse to check inventory in."
+        }
+      },
+      "required": ["item", "warehouse"]
+    }
+  }
+}
+]]></mcp:parameters-schema>
+			<mcp:responses >
+				<mcp:text-tool-response-content text="#[payload.^raw]" />
+			</mcp:responses>
+		</mcp:tool-listener>
+		<flow-ref doc:name="Flow Reference" doc:id="362dc64f-1283-4db1-b6cb-7966ebfb8539" name="get-inventory"/>
+	</flow>
+	<flow name="update-invenotry-tool" doc:id="79453f10-aece-43c2-81ea-95c0683e46b9" >
+		<mcp:tool-listener doc:name="Tool Listener" doc:id="d4bbbf70-9553-4219-92a5-7049a257338a" config-ref="MCP_Server" name="update_inventory_record" >
+			<mcp:description ><![CDATA[Updates the inventory quantity or item_warehouse for a specific item in a warehouse.]]></mcp:description>
+			<mcp:parameters-schema ><![CDATA[{
+  "type": "function",
+  "function": {
+    "name": "update_inventory_record",
+    "description": "Updates the inventory quantity or item_warehouse for a specific item in a warehouse.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "string",
+          "description": "The item code to update."
+        },
+        "warehouse": {
+          "type": "string",
+          "description": "The warehouse of the item."
+        },
+        "quantity": {
+          "type": "integer",
+          "description": "The new quantity of the item."
+        },
+        "item_warehouse": {
+          "type": "string",
+          "description": "The new identifier name for the item and warehouse combination."
+        }
+      },
+      "required": ["item", "warehouse"]
+    }
+  }
+}
+]]></mcp:parameters-schema>
+			<mcp:responses >
+				<mcp:text-tool-response-content text="#[payload.^raw]" />
+			</mcp:responses>
+		</mcp:tool-listener>
+		<flow-ref doc:name="Flow Reference" doc:id="f45955cd-bd41-493f-b3b6-4b7555772b25" name="update-inventory" />
+	</flow>
+	<flow name="delete-invenotry-tool" doc:id="f37e12e3-5371-4db1-9201-e6fecc90e2e6" >
+		<mcp:tool-listener doc:name="Tool Listener" doc:id="ac725662-7715-4ee5-80a9-16d8de14ffdd" config-ref="MCP_Server" name="delete_inventory_record" >
+			<mcp:description ><![CDATA[Deletes the inventory record for a specific item in a warehouse.]]></mcp:description>
+			<mcp:parameters-schema ><![CDATA[{
+  "type": "function",
+  "function": {
+    "name": "delete_inventory_record",
+    "description": "Deletes the inventory record for a specific item in a warehouse.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "string",
+          "description": "The item code to delete from inventory."
+        },
+        "warehouse": {
+          "type": "string",
+          "description": "The warehouse to delete the item from."
+        }
+      },
+      "required": ["item", "warehouse"]
+    }
+  }
+}
+]]></mcp:parameters-schema>
+			<mcp:responses >
+				<mcp:text-tool-response-content text="#[payload.^raw]" />
+			</mcp:responses>
+		</mcp:tool-listener>
+		<flow-ref doc:name="Flow Reference" doc:id="e6fe09f8-9e94-405a-889a-3a04a6822e5c" name="delete-inventory" />
+	</flow>
+	<flow name="insert-invenotry-tool" doc:id="13d2c547-128c-4950-9953-ac9ff98c5152" >
+		<mcp:tool-listener doc:name="Tool Listener" doc:id="55d8b133-d04f-472f-9a4d-4169c8099eca" config-ref="MCP_Server" name="create_inventory_record" >
+			<mcp:description ><![CDATA[The identifier name for the item and warehouse combination.]]></mcp:description>
+			<mcp:parameters-schema ><![CDATA[{
+  "type": "function",
+  "function": {
+    "name": "create_inventory_record",
+    "description": "Creates a new inventory record for a specific item in a warehouse.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "item_warehouse": {
+          "type": "string",
+          "description": "The identifier name for the item and warehouse combination."
+        },
+        "item": {
+          "type": "string",
+          "description": "The item code to be added to inventory."
+        },
+        "warehouse": {
+          "type": "string",
+          "description": "The warehouse location for the item."
+        },
+        "quantity": {
+          "type": "integer",
+          "description": "The quantity of the item to add."
+        }
+      },
+      "required": ["item_warehouse", "item", "warehouse", "quantity"]
+    }
+  }
+}
+]]></mcp:parameters-schema>
+			<mcp:responses >
+				<mcp:text-tool-response-content text="#[payload.^raw]" />
+			</mcp:responses>
+		</mcp:tool-listener>
+		<flow-ref doc:name="Flow Reference" doc:id="b34372ae-22bc-4a4e-9377-81ac4a6161f4" name="create-inventory" />
+	</flow>
+</mule>

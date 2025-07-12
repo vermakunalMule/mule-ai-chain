@@ -1,0 +1,141 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "get-inventory-tool",
+      "description": "Retrieves inventory quantity for a specific item in a warehouse.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "string",
+            "description": "The item code to query inventory for."
+          },
+          "warehouse": {
+            "type": "string",
+            "description": "The warehouse to check inventory in."
+          }
+        },
+        "required": ["item", "warehouse"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "update_inventory_record",
+      "description": "Updates the inventory quantity or item_warehouse for a specific item in a warehouse.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "string",
+            "description": "The item code to update."
+          },
+          "warehouse": {
+            "type": "string",
+            "description": "The warehouse of the item."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "The new quantity of the item."
+          },
+          "item_warehouse": {
+            "type": "string",
+            "description": "The new identifier name for the item and warehouse combination."
+          }
+        },
+        "required": ["item", "warehouse"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "delete_inventory_record",
+      "description": "Deletes the inventory record for a specific item in a warehouse.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "string",
+            "description": "The item code to delete from inventory."
+          },
+          "warehouse": {
+            "type": "string",
+            "description": "The warehouse to delete the item from."
+          }
+        },
+        "required": ["item", "warehouse"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "create_inventory_record",
+      "description": "Creates a new inventory record for a specific item in a warehouse.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "item_warehouse": {
+            "type": "string",
+            "description": "The identifier name for the item and warehouse combination."
+          },
+          "item": {
+            "type": "string",
+            "description": "The item code to be added to inventory."
+          },
+          "warehouse": {
+            "type": "string",
+            "description": "The warehouse location for the item."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "The quantity of the item to add."
+          }
+        },
+        "required": ["item_warehouse", "item", "warehouse", "quantity"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "create-order-tool",
+      "description": "Creates one or more customer orders.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "orders": {
+            "type": "array",
+            "description": "A list of orders to create.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "customer_name": {
+                  "type": "string",
+                  "description": "Name of the customer placing the order."
+                },
+                "customer_address": {
+                  "type": "string",
+                  "description": "Shipping address for the customer."
+                },
+                "item": {
+                  "type": "string",
+                  "description": "Item code to order."
+                },
+                "qty": {
+                  "type": "integer",
+                  "description": "Quantity of the item to order."
+                }
+              },
+              "required": ["customer_name", "customer_address", "item", "qty"]
+            }
+          }
+        },
+        "required": ["orders"]
+      }
+    }
+  }
+]

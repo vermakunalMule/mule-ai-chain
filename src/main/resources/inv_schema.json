@@ -1,0 +1,75 @@
+{
+    "template": "You are a assistant who analyses feedback in the dataset. Answer via json output ",
+    "instruction": "answer politely ",
+    "dataset": "what is the capitalof australia and what is the temperature there and what is the rain",
+ 
+        "tools": [
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_current_temperature",
+                    "description": "Get the current temperature for a specific location",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "location": {
+                                "type": "string",
+                                "description": "The city and state, e.g., San Francisco, CA"
+                            },
+                            "unit": {
+                                "type": "string",
+                                "enum": [
+                                    "Celsius",
+                                    "Fahrenheit"
+                                ],
+                                "description": "The temperature unit to use. Infer this from the user's location."
+                            }
+                        },
+                        "required": [
+                            "location",
+                            "unit"
+                        ]
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_rain_probability",
+                    "description": "Get the probability of rain for a specific location",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "location": {
+                                "type": "string",
+                                "description": "The city and state, e.g., San Francisco, CA"
+                            }
+                        },
+                        "required": [
+                            "location"
+                        ]
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_delivery_date",
+                    "description": "Get the delivery date for a customer's order. Call this whenever you need to know the delivery date, for example when a customer asks 'Where is my package'",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "order_id": {
+                                "type": "string",
+                                "description": "The customer's order ID."
+                            }
+                        },
+                        "required": [
+                            "order_id"
+                        ]
+                    }
+                }
+            }
+        ]
+    
+}

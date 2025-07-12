@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_37bccb69_612f_4bc4_904e_08ee81a98ba4_Output_Variables_orderScript = Any
+

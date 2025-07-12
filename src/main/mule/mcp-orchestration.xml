@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:mac-inference="http://www.mulesoft.org/schema/mule/mac-inference" xmlns:mcp="http://www.mulesoft.org/schema/mule/mcp"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/mcp http://www.mulesoft.org/schema/mule/mcp/current/mule-mcp.xsd
+http://www.mulesoft.org/schema/mule/mac-inference http://www.mulesoft.org/schema/mule/mac-inference/current/mule-mac-inference.xsd">
+	
+	
+	<flow name="mac-project-mock-toolsFlow3" doc:id="d39c3c21-0d6b-4a45-b924-26170e51a0ca" >
+		<http:listener doc:name="Listener" doc:id="fec8a7b1-db8f-4eb6-a2ee-831fa104cfa1" config-ref="HTTP_Listener_config" path="/list/tools"/>
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;attributes.headers]" doc:name="Set Variable" doc:id="3801c8c6-3aac-444e-938b-fd064f0872a6" variableName="llmVariables"/>
+		<ee:transform doc:name="Transform Message" doc:id="2b254c2b-f23b-4004-9af0-ddf1ffc7b730">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="requestPayload" ><![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Transform Message" doc:id="4abc19ef-2b94-4b5a-8b24-238ce49a9b63" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="tool_list" ><![CDATA[%dw 2.0
+output application/json
+---
+readUrl('classpath://tools.json', 'application/json')]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<mcp:list-tools doc:name="List tools" doc:id="f01a7f26-f453-4930-bd68-ee72c37ed409" config-ref="MCP_Client" target="vars.list"/>
+		<mac-inference:tools-native-template doc:name="[Tools] Native Template (Reasoning only)" doc:id="6af488c5-ef6b-417a-ab01-b6a44b6706a5" config-ref="MuleSoft_Inference_Text_generation_config">
+			<mac-inference:template ><![CDATA[#[vars.requestPayload.template]]]></mac-inference:template>
+			<mac-inference:instructions ><![CDATA[#[vars.requestPayload.instruction]]]></mac-inference:instructions>
+			<mac-inference:data ><![CDATA[#[vars.requestPayload.dataset]]]></mac-inference:data>
+			<mac-inference:tools ><![CDATA[#[vars.tool_list]]]></mac-inference:tools>
+		</mac-inference:tools-native-template>
+		<ee:transform doc:name="Transform Message" doc:id="a5fcd8c7-1601-45a5-bf1b-a2c7a7171b5b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	payload : payload,
+	attributes: attributes
+	
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="b9b9e31d-8785-435d-98cf-426f28e145d0" message="#[payload]"/>
+		<set-variable value="#[payload.payload.tools[0].function.name]" doc:name="Set Variable" doc:id="788f77ac-c9f2-4bad-a702-d044f1e0a17e" variableName="selected_tool"/>
+		<choice doc:name="Choice" doc:id="e1eb2135-6460-4b55-918f-395d2726073e" >
+			<when expression="#[!isEmpty(vars.selected_tool)]">
+				<mcp:call-tool toolName="#[payload.payload.tools[0].function.name]" doc:name="Call tool" doc:id="6735f5e3-6c1f-4729-a1a3-0658ecc667fb" config-ref="MCP_Client">
+			<mcp:arguments><![CDATA[#[payload.payload.tools[0].function.arguments]]]></mcp:arguments>
+		</mcp:call-tool>
+				<ee:transform doc:name="Transform Message" doc:id="9fbf7a4f-ecc6-4461-a44c-7df64e92bd45">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+
+	read(payload.contents.text[0],' application/json')
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</when>
+		</choice>
+	</flow>
+</mule>

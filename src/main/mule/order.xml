@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="orderFlow" doc:id="f873e52c-a7b3-4dc6-bc79-8de28d9ab600">
+		<http:listener doc:name="Listener" doc:id="059dc2c9-eb6f-4a90-a763-d46bc5c1d622" config-ref="HTTP_Listener_config" path="/order"/>
+		<flow-ref doc:name="call-create-order-flow" doc:id="df435d82-8864-4019-b0fb-415692085393" name="create-order-flow"/>
+	</flow>
+	<sub-flow name="create-order-flow" doc:id="37bccb69-612f-4bc4-904e-08ee81a98ba4" >
+		<ee:transform doc:name="Transform Message" doc:id="576362f4-a2cc-4e10-895e-ea39c79deccc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload.orders]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="order-script" doc:id="1437052a-7218-4ae1-b288-cf8574c38d38">
+			<ee:message>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="orderScript" ><![CDATA[%dw 2.0
+output application/json
+---
+payload map(order) ->
+"WITH new_order AS (
+    INSERT INTO public.\"order\" (customer_name, customer_address)
+    VALUES ('" ++ order.customer_name ++ "','" ++ order.customer_address ++ "')
+    RETURNING id
+),
+insert_order_details AS (
+INSERT INTO public.order_details (order_id, item, qty)
+    VALUES 
+        ((SELECT id FROM new_order),'" ++ order.item ++ "'," ++ order.qty ++ ")
+RETURNING item, qty
+),
+selected_warehouse AS (
+  SELECT i.item, i.warehouse
+  FROM inventory i
+  JOIN insert_order_details od ON i.item = od.item
+  WHERE i.quantity >= od.qty
+  LIMIT 1
+)
+UPDATE inventory i
+SET quantity = i.quantity - od.qty
+FROM insert_order_details od, selected_warehouse w
+WHERE i.item = od.item AND i.warehouse = w.warehouse"]]></ee:set-variable>
+			
+</ee:variables>
+		</ee:transform>
+		<foreach doc:name="for-each-order" doc:id="14edb00a-1738-4d97-9c3f-68f1e44270c2" collection="#[vars.orderScript]">
+			<db:execute-script doc:name="Execute script" doc:id="58af401b-b5ea-4621-a886-e45958eff5db" config-ref="Database_Config">
+			<db:sql><![CDATA[#[payload]]]></db:sql>
+		</db:execute-script>
+		</foreach>
+		
+		<logger level="INFO" doc:name="log-end" doc:id="492d1c00-c2c1-4663-973d-5343aacd0150" message='#["Successfully inserted the orders against the customers"]'/>
+	</sub-flow>
+</mule>

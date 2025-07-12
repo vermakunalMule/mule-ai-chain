@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:mac-inference="http://www.mulesoft.org/schema/mule/mac-inference" xmlns:mcp="http://www.mulesoft.org/schema/mule/mcp"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/mcp http://www.mulesoft.org/schema/mule/mcp/current/mule-mcp.xsd
+http://www.mulesoft.org/schema/mule/mac-inference http://www.mulesoft.org/schema/mule/mac-inference/current/mule-mac-inference.xsd">
+	<flow name="get-inventory" doc:id="2475b9a8-1e54-4bb9-965a-999f4828f4a4" >
+		<db:select doc:name="Select" doc:id="7abb5aad-504f-409c-93ee-c2210dde6b2f" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT item_warehouse, item, quantity, warehouse
+FROM public.inventory
+where item = :item and warehouse = :warehouse]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	item : payload.item,
+	warehouse : payload.warehouse
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="b3312764-6aec-40be-acf5-662bad809538" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="0a52fa35-757e-4c12-9123-8adfba2b988d" />
+	</flow>
+	<flow name="update-inventory" doc:id="7577ca09-61c1-46b7-930d-b7859caf3672" >
+		<db:update doc:name="Update" doc:id="1a1367b1-d470-4383-a8bf-7e1dbdce421b" config-ref="Database_Config">
+			<db:sql ><![CDATA[UPDATE public.inventory
+SET quantity = :quantity
+WHERE item = :item AND warehouse = :warehouse;
+]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	item : payload.item,
+	quantity : payload.quantity,
+	warehouse : payload.warehouse
+}]]]></db:input-parameters>
+		</db:update>
+		<ee:transform doc:name="Transform Message" doc:id="220a5928-1796-4011-9939-607ce9f9da5a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="eacbe3a8-a9ad-493b-8681-84f23852b9ac" />
+	</flow>
+	<flow name="delete-inventory" doc:id="fae754cb-b40c-481d-8ffa-46caa5e8c82e" >
+		<db:delete doc:name="Delete" doc:id="75bb9f47-06f1-4ab0-9b2f-c6ddd403333c" config-ref="Database_Config">
+			<db:sql ><![CDATA[DELETE FROM public.inventory
+WHERE item = :item AND warehouse = :warehouse;
+]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	item : payload.item,
+	warehouse : payload.warehouse
+}]]]></db:input-parameters>
+		</db:delete>
+		<ee:transform doc:name="Transform Message" doc:id="48aa3619-20e9-48bd-9947-a8e4803814c9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="eee20837-0912-47f2-81c5-38b62a031885" />
+	</flow>
+	<flow name="create-inventory" doc:id="cf69265f-5468-441c-8e59-ce8a3f12aa21" >
+		<db:insert doc:name="Insert" doc:id="4bbc7450-1a8d-40eb-a6f8-5b0af92b1ddf" config-ref="Database_Config">
+			<db:sql ><![CDATA[INSERT INTO public.inventory (item_warehouse, item, quantity, warehouse)
+VALUES (:item_warehouse, :item, :quantity, :warehouse);]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	item : payload.item,
+	quantity : payload.quantity,
+	item_warehouse : payload.item_warehouse,
+	warehouse : payload.warehouse
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="92cdce73-e647-49b2-909d-49929d0f7bfc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="3d0bdceb-7c60-4977-b3a9-a5f36c815cdb" />
+	</flow>
+</mule>

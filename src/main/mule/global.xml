@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:mcp="http://www.mulesoft.org/schema/mule/mcp"
+	xmlns:mac-inference="http://www.mulesoft.org/schema/mule/mac-inference"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/mac-inference http://www.mulesoft.org/schema/mule/mac-inference/current/mule-mac-inference.xsd
+http://www.mulesoft.org/schema/mule/mcp http://www.mulesoft.org/schema/mule/mcp/current/mule-mcp.xsd">
+	<global-property doc:name="Global Property" doc:id="9a831d77-6211-4ac9-acdd-6b70221847df" name="http.private.port" value="8091" />
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="30a62808-6164-4ed0-82d0-bf10269e529c" >
+		<db:generic-connection url="jdbc:postgresql://database-1.cv0ge6wkwxr7.ap-southeast-2.rds.amazonaws.com:5432/postgres" driverClassName="org.postgresql.Driver" user="postgres" password="Trkopl_2" />
+	</db:config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="33ca543e-a46a-4335-8b51-0a611ed47675" >
+		<http:listener-connection host="0.0.0.0" port="${http.private.port}" />
+	</http:listener-config>
+	<global-property doc:name="Global Property" doc:id="a4b293b2-bedf-4adb-99a3-993dfdb4d834" name="http.private.port" value="8091" />
+	
+	<mac-inference:text-generation-config name="MuleSoft_Inference_Text_generation_config" doc:name="MuleSoft Inference Text generation config" doc:id="b8aa52a5-6f3e-4a01-b388-0bb6765a943f" >
+		<mac-inference:llm-connection inferenceType="#[vars.llmVariables.llmtype]" apiKey="#[vars.llmVariables.apikey]" modelName="#[vars.llmVariables.model]" timeout="60000" />
+	</mac-inference:text-generation-config>
+	<mcp:server-config name="MCP_Server" doc:name="MCP Server" doc:id="cd5f9ced-8d18-4552-97b2-b3d99bd47380" serverName="mule-mcp-server" serverVersion="1.0.0" >
+		<mcp:sse-server-connection listenerConfig="HTTP_Listener_config" />
+	</mcp:server-config>
+	<mcp:client-config name="MCP_Client" doc:name="MCP Client" doc:id="74357e6c-7db4-4647-93f9-c7cc8ae2ca24" clientName="mule-mcp-server" clientVersion="1.0.0">
+		<mcp:sse-client-connection serverUrl="http://localhost:8091" />
+	</mcp:client-config>
+	
+</mule>
