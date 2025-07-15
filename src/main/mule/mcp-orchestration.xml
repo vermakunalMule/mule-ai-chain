@@ -12,7 +12,10 @@ http://www.mulesoft.org/schema/mule/mac-inference http://www.mulesoft.org/schema
 	
 	<flow name="mac-project-mock-toolsFlow3" doc:id="d39c3c21-0d6b-4a45-b924-26170e51a0ca" >
 		<http:listener doc:name="Listener" doc:id="fec8a7b1-db8f-4eb6-a2ee-831fa104cfa1" config-ref="HTTP_Listener_config" path="/list/tools"/>
-		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;attributes.headers]" doc:name="Set Variable" doc:id="3801c8c6-3aac-444e-938b-fd064f0872a6" variableName="llmVariables"/>
+		<set-variable value="#[%dw 2.0
+output application/json
+---
+attributes.headers]" doc:name="Set Variable" doc:id="3801c8c6-3aac-444e-938b-fd064f0872a6" variableName="llmVariables"/>
 		<ee:transform doc:name="Transform Message" doc:id="2b254c2b-f23b-4004-9af0-ddf1ffc7b730">
 			<ee:message>
 			</ee:message>
@@ -34,7 +37,6 @@ output application/json
 readUrl('classpath://tools.json', 'application/json')]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<mcp:list-tools doc:name="List tools" doc:id="f01a7f26-f453-4930-bd68-ee72c37ed409" config-ref="MCP_Client" target="vars.list"/>
 		<mac-inference:tools-native-template doc:name="[Tools] Native Template (Reasoning only)" doc:id="6af488c5-ef6b-417a-ab01-b6a44b6706a5" config-ref="MuleSoft_Inference_Text_generation_config">
 			<mac-inference:template ><![CDATA[#[vars.requestPayload.template]]]></mac-inference:template>
 			<mac-inference:instructions ><![CDATA[#[vars.requestPayload.instruction]]]></mac-inference:instructions>

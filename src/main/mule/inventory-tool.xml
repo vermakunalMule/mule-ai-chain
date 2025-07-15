@@ -14,25 +14,18 @@ http://www.mulesoft.org/schema/mule/mac-inference http://www.mulesoft.org/schema
 		<mcp:tool-listener doc:name="Tool Listener" doc:id="bedb181a-3809-4923-becb-ddd3b4f819ad" config-ref="MCP_Server" name="get-inventory-tool">
 			<mcp:description ><![CDATA[get inventory for an item in a warehouse]]></mcp:description>
 			<mcp:parameters-schema ><![CDATA[{
-  "type": "function",
-  "function": {
-    "name": "get-inventory-tool",
-    "description": "Retrieves inventory quantity for a specific item in a warehouse.",
-    "parameters": {
-      "type": "object",
-      "properties": {
-        "item": {
-          "type": "string",
-          "description": "The item code to query inventory for."
-        },
-        "warehouse": {
-          "type": "string",
-          "description": "The warehouse to check inventory in."
-        }
-      },
-      "required": ["item", "warehouse"]
+  "type": "object",
+  "properties": {
+    "item": {
+      "type": "string",
+      "description": "The item code to query inventory for."
+    },
+    "warehouse": {
+      "type": "string",
+      "description": "The warehouse to check inventory in."
     }
-  }
+  },
+  "required": ["item", "warehouse"]
 }
 ]]></mcp:parameters-schema>
 			<mcp:responses >
@@ -45,33 +38,26 @@ http://www.mulesoft.org/schema/mule/mac-inference http://www.mulesoft.org/schema
 		<mcp:tool-listener doc:name="Tool Listener" doc:id="d4bbbf70-9553-4219-92a5-7049a257338a" config-ref="MCP_Server" name="update_inventory_record" >
 			<mcp:description ><![CDATA[Updates the inventory quantity or item_warehouse for a specific item in a warehouse.]]></mcp:description>
 			<mcp:parameters-schema ><![CDATA[{
-  "type": "function",
-  "function": {
-    "name": "update_inventory_record",
-    "description": "Updates the inventory quantity or item_warehouse for a specific item in a warehouse.",
-    "parameters": {
-      "type": "object",
-      "properties": {
-        "item": {
-          "type": "string",
-          "description": "The item code to update."
-        },
-        "warehouse": {
-          "type": "string",
-          "description": "The warehouse of the item."
-        },
-        "quantity": {
-          "type": "integer",
-          "description": "The new quantity of the item."
-        },
-        "item_warehouse": {
-          "type": "string",
-          "description": "The new identifier name for the item and warehouse combination."
-        }
-      },
-      "required": ["item", "warehouse"]
+  "type": "object",
+  "properties": {
+    "item": {
+      "type": "string",
+      "description": "The item code to update."
+    },
+    "warehouse": {
+      "type": "string",
+      "description": "The warehouse of the item."
+    },
+    "quantity": {
+      "type": "integer",
+      "description": "The new quantity of the item."
+    },
+    "item_warehouse": {
+      "type": "string",
+      "description": "The new identifier name for the item and warehouse combination."
     }
-  }
+  },
+  "required": ["item", "warehouse"]
 }
 ]]></mcp:parameters-schema>
 			<mcp:responses >
@@ -84,25 +70,18 @@ http://www.mulesoft.org/schema/mule/mac-inference http://www.mulesoft.org/schema
 		<mcp:tool-listener doc:name="Tool Listener" doc:id="ac725662-7715-4ee5-80a9-16d8de14ffdd" config-ref="MCP_Server" name="delete_inventory_record" >
 			<mcp:description ><![CDATA[Deletes the inventory record for a specific item in a warehouse.]]></mcp:description>
 			<mcp:parameters-schema ><![CDATA[{
-  "type": "function",
-  "function": {
-    "name": "delete_inventory_record",
-    "description": "Deletes the inventory record for a specific item in a warehouse.",
-    "parameters": {
-      "type": "object",
-      "properties": {
-        "item": {
-          "type": "string",
-          "description": "The item code to delete from inventory."
-        },
-        "warehouse": {
-          "type": "string",
-          "description": "The warehouse to delete the item from."
-        }
-      },
-      "required": ["item", "warehouse"]
+  "type": "object",
+  "properties": {
+    "item": {
+      "type": "string",
+      "description": "The item code to delete from inventory."
+    },
+    "warehouse": {
+      "type": "string",
+      "description": "The warehouse to delete the item from."
     }
-  }
+  },
+  "required": ["item", "warehouse"]
 }
 ]]></mcp:parameters-schema>
 			<mcp:responses >
@@ -115,33 +94,26 @@ http://www.mulesoft.org/schema/mule/mac-inference http://www.mulesoft.org/schema
 		<mcp:tool-listener doc:name="Tool Listener" doc:id="55d8b133-d04f-472f-9a4d-4169c8099eca" config-ref="MCP_Server" name="create_inventory_record" >
 			<mcp:description ><![CDATA[The identifier name for the item and warehouse combination.]]></mcp:description>
 			<mcp:parameters-schema ><![CDATA[{
-  "type": "function",
-  "function": {
-    "name": "create_inventory_record",
-    "description": "Creates a new inventory record for a specific item in a warehouse.",
-    "parameters": {
-      "type": "object",
-      "properties": {
-        "item_warehouse": {
-          "type": "string",
-          "description": "The identifier name for the item and warehouse combination."
-        },
-        "item": {
-          "type": "string",
-          "description": "The item code to be added to inventory."
-        },
-        "warehouse": {
-          "type": "string",
-          "description": "The warehouse location for the item."
-        },
-        "quantity": {
-          "type": "integer",
-          "description": "The quantity of the item to add."
-        }
-      },
-      "required": ["item_warehouse", "item", "warehouse", "quantity"]
+  "type": "object",
+  "properties": {
+    "item_warehouse": {
+      "type": "string",
+      "description": "The identifier name for the item and warehouse combination."
+    },
+    "item": {
+      "type": "string",
+      "description": "The item code to be added to inventory."
+    },
+    "warehouse": {
+      "type": "string",
+      "description": "The warehouse location for the item."
+    },
+    "quantity": {
+      "type": "integer",
+      "description": "The quantity of the item to add."
     }
-  }
+  },
+  "required": ["item_warehouse", "item", "warehouse", "quantity"]
 }
 ]]></mcp:parameters-schema>
 			<mcp:responses >

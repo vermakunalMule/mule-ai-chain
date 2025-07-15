@@ -7,7 +7,7 @@
 	<version>1.0.0</version>
 	<packaging>mule-application</packaging>
 
-	<name>mule-ai-poc</name>
+	<name>mule-ai-chain</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -76,12 +76,6 @@
 			<groupId>io.github.mulesoft-ai-chain-project</groupId>
 			<artifactId>mule4-inference-connector</artifactId>
 			<version>0.5.7</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
-			<groupId>com.mulesoft.connectors</groupId>
-			<artifactId>mule4-azure-eventhubs-connector</artifactId>
-			<version>1.2.0</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 	</dependencies>
